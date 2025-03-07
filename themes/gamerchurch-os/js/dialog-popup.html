@@ -1,0 +1,54 @@
+<dialog id="templePopup"></dialog>
+<script>
+// Helper functions for cookies
+function setCookie(name, value, hours) {
+  const d = new Date();
+  d.setTime(d.getTime() + (hours * 60 * 60 * 1000));
+  const expires = "expires=" + d.toUTCString();
+  document.cookie = name + "=" + value + ";" + expires + ";path=/";
+}
+
+function getCookie(name) {
+  const cookieArr = document.cookie.split(";");
+  for (let cookie of cookieArr) {
+    let [cookieName, cookieValue] = cookie.split("=");
+    if (cookieName.trim() === name) {
+      return cookieValue;
+    }
+  }
+  return null;
+}
+
+// Create and display the popup
+function createPopup(htmlContent) {
+  const dialog = document.getElementById("templePopup");
+  
+  // Insert the content and a close button
+  dialog.innerHTML = htmlContent + '<button id="closePopup">Close</button>';
+  dialog.showModal();
+  
+  // If the user clicks anywhere in the dialog, close it.
+  // (This may be removed if you want only the close button to work.)
+  dialog.addEventListener('click', () => {
+    dialog.close();
+  });
+  
+  // When the close button is clicked:
+  document.getElementById("closePopup").addEventListener('click', (event) => {
+    // Prevent the dialog's click listener from also firing
+    event.stopPropagation();
+    dialog.close();
+    // Set a cookie that lasts 24 hours
+    setCookie("closedPopup", "true", 24);
+  });
+}
+
+// Only show the popup if the cookie isn't set
+if (!getCookie("closedPopup")) {
+  createPopup("<p>GamerChurchOS - BETA-0.1.3</p><p><del>GAMER CHURCH CONSOLE</del></p><img src='https://console.gamer.church/wp-content/uploads/2025/01/church-pixel.gif' alt='GAMER CHURCH CONSOLE - BETA-0.1.3' /><p>Public Domain Operating System</p>");
+} else {
+  // Optional: If the cookie is present, make sure the dialog is closed.
+  const dialog = document.getElementById("templePopup");
+  dialog.close();
+}
+</script>
