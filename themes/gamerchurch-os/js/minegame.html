@@ -1,0 +1,424 @@
+<div class="minegame-wrap">
+<style>
+#minegame.minegame {
+  width: 16em;
+  height: 16em;
+	font-size: 15px;
+  border: 2px solid;
+  padding: 0;
+  border-collapse: collapse !important;
+  background-color: currentcolor;
+  margin: 0 auto;
+	box-sizing: border-box;
+}
+
+#minegame.minegame tr {
+  height: 2em;
+  display: flex;
+  padding: 0;
+	border: none !important;
+}
+
+#minegame.minegame td {
+  display: grid;
+  position: relative;
+  border: 2px solid;
+  flex-grow: 1;
+  background-color: #bbb;
+  box-shadow: 6px 6px 6px inset rgba(255,255,255,0.3), -6px -6px 6px inset rgba(0,0,100,0.3);
+  cursor: crosshair;
+  overflow: hidden;
+}
+
+#minegame.minegame td:hover {
+  color: var(--red);
+	box-shadow: 6px 6px 6px inset rgba(255,255,255,0.3), -6px -6px 6px inset rgba(100,0,0,0.3);
+}
+
+#minegame.minegame td b {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  user-select: none;
+  border: 4px groove #bbb;
+}
+
+#minegame.minegame .active {
+  background-color: var(--yellow);
+}
+
+#minegame.minegame .active b {
+  border-color: var(--yellow);
+}
+</style>
+<table id="minegame" class="minegame">
+  <tr>
+    <td><b></b></td>
+    <td><b></b></td>
+    <td><b></b></td>
+    <td><b></b></td>
+    <td><b></b></td>
+    <td><b></b></td>
+    <td><b></b></td>
+    <td><b></b></td>
+  </tr>
+  <tr>
+    <td><b></b></td>
+    <td><b></b></td>
+    <td><b></b></td>
+    <td><b></b></td>
+    <td><b></b></td>
+    <td><b></b></td>
+    <td><b></b></td>
+    <td><b></b></td>
+  </tr>
+  <tr>
+    <td><b></b></td>
+    <td><b></b></td>
+    <td><b></b></td>
+    <td><b></b></td>
+    <td><b></b></td>
+    <td><b></b></td>
+    <td><b></b></td>
+    <td><b></b></td>
+  </tr>
+  <tr>
+    <td><b></b></td>
+    <td><b></b></td>
+    <td><b></b></td>
+    <td><b></b></td>
+    <td><b></b></td>
+    <td><b></b></td>
+    <td><b></b></td>
+    <td><b></b></td>
+  </tr>
+  <tr>
+    <td><b></b></td>
+    <td><b></b></td>
+    <td><b></b></td>
+    <td><b></b></td>
+    <td><b></b></td>
+    <td><b></b></td>
+    <td><b></b></td>
+    <td><b></b></td>
+  </tr>
+  <tr>
+    <td><b></b></td>
+    <td><b></b></td>
+    <td><b></b></td>
+    <td><b></b></td>
+    <td><b></b></td>
+    <td><b></b></td>
+    <td><b></b></td>
+    <td><b></b></td>
+  </tr>
+  <tr>
+    <td><b></b></td>
+    <td><b></b></td>
+    <td><b></b></td>
+    <td><b></b></td>
+    <td><b></b></td>
+    <td><b></b></td>
+    <td><b></b></td>
+    <td><b></b></td>
+  </tr>
+  <tr>
+    <td><b></b></td>
+    <td><b></b></td>
+    <td><b></b></td>
+    <td><b></b></td>
+    <td><b></b></td>
+    <td><b></b></td>
+    <td><b></b></td>
+    <td><b></b></td>
+  </tr>
+</table>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const minegame = document.querySelector('#minegame');
+
+  if (!minegame) return;
+
+  let phase = 1; // Start at phase 1
+  let prestigeCount = 0; // Track how many times the game has been completed
+  let wildcards = []; // Store the current wildcard indices
+  let timer = null; // Timer reference
+  let timeRemaining = 0; // Current timer value
+
+  // Add a <small> tag for the timer below #minegame
+  const timerElement = document.createElement('small');
+  timerElement.id = 'timer';
+  timerElement.textContent = 'Time: ';
+  minegame.insertAdjacentElement('afterend', timerElement);
+
+  // Sound effects
+  const sounds = {
+    boom: new Audio('https://console.gamer.church/wp-content/uploads/2025/01/boom.mp3'),
+    levelUp: new Audio('https://console.gamer.church/wp-content/uploads/2025/01/levelup.mp3'),
+    tap: new Audio('https://console.gamer.church/wp-content/uploads/2025/01/plop.mp3'),
+    untap: new Audio('https://console.gamer.church/wp-content/uploads/2025/01/unplop.mp3'),
+		countdown: new Audio('https://console.gamer.church/wp-content/uploads/2025/01/beeps.mp3'),
+		win: new Audio('https://console.gamer.church/wp-content/uploads/2025/01/minewin.mp3'),
+  };
+
+  // Helper function to start the countdown timer
+function startTimer() {
+  clearInterval(timer); // Clear any existing timer
+
+  // Set the initial timeRemaining based on the phase
+  timeRemaining = 60 - (phase - 2) * 15; // 60s for phase 2, 45s for phase 3, etc.
+  timerElement.textContent = `Time: ${timeRemaining}s`;
+  timerElement.classList.remove('flashing'); // Remove flashing class if present
+
+  timer = setInterval(() => {
+    timeRemaining--;
+    timerElement.textContent = `Time: ${timeRemaining}s`;
+
+    // Add flashing class when 5s or less
+    if (timeRemaining <= 5) {
+      timerElement.classList.add('flashing');
+			sounds.countdown.play(); // Play the countdown sound
+    }
+
+    if (timeRemaining <= 0) {
+      clearInterval(timer);
+      console.log('Timer expired! Resetting stage...');
+      sounds.boom.play(); // Play the reset sound
+      restartStage(); // Reset the current stage
+      startTimer(); // Restart the timer
+    }
+  }, 1000);
+}
+
+  // Helper function to check if all non-wildcard cells have a specific class
+  function allNonWildcardsHaveClass(className) {
+    const cells = minegame.querySelectorAll('td');
+    return Array.from(cells).every(cell =>
+      cell.classList.contains('wildcard') || cell.classList.contains(className)
+    );
+  }
+
+  // Function to reset wildcards and reroll for the current phase
+  function rerollWildcards() {
+    const cells = minegame.querySelectorAll('td');
+    wildcards = []; // Clear previous wildcards
+
+    // Remove all previous wildcard classes
+    cells.forEach(cell => cell.classList.remove('wildcard'));
+
+    // Randomly select between 2 and 8 wildcards
+    const totalWildcards = Math.floor(Math.random() * 7) + 2;
+    const indices = Array.from({ length: cells.length }, (_, i) => i);
+
+    // Shuffle indices array
+    for (let i = indices.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [indices[i], indices[j]] = [indices[j], indices[i]];
+    }
+
+    // Assign the wildcard class to randomly chosen cells
+    for (let i = 0; i < totalWildcards; i++) {
+      const cell = cells[indices[i]];
+      cell.classList.add('wildcard');
+      wildcards.push(indices[i]);
+    }
+
+    console.log(`Wildcards rerolled: ${wildcards.length} wildcards`);
+  }
+
+  // Function to ensure all tiles progress to the previous stage class and remain active
+  function updateTilesToCurrentStage() {
+    const cells = minegame.querySelectorAll('td');
+    const previousStageClass = phase === 1 ? 'active' : `stage-${phase - 1}`;
+
+    cells.forEach(cell => {
+      cell.classList.add('active'); // Ensure all tiles have `.active`
+      if (!cell.classList.contains(previousStageClass)) {
+        cell.classList.add(previousStageClass); // Add the previous stage class to all tiles, including wildcards
+      }
+    });
+
+    console.log(`All tiles updated to ${previousStageClass} and .active`);
+  }
+
+  // Function to reset the current stage
+  function restartStage() {
+    const cells = minegame.querySelectorAll('td');
+    const currentStageClass = phase === 1 ? 'active' : `stage-${phase}`;
+    console.log(`Restarting stage ${phase}`);
+    
+    // Remove only the current stage class
+    cells.forEach(cell => cell.classList.remove(currentStageClass));
+
+    // Reroll wildcards for the current stage
+    rerollWildcards();
+  }
+
+  // Function to restart the entire game
+  function restartGame() {
+    const cells = minegame.querySelectorAll('td');
+    cells.forEach(cell => {
+      cell.classList.remove('active', 'wildcard', 'stage-2', 'stage-3', 'stage-4', 'stage-5');
+    });
+    phase = 1;
+    clearInterval(timer); // Stop the timer
+    rerollWildcards();
+    timerElement.textContent = 'Time: '; // Reset timer display
+    console.log('Game restarted!');
+  }
+
+  // Function to handle prestige
+  function prestige() {
+		sounds.win.play();
+    prestigeCount++;
+    minegame.classList.add('prestige', `prestige-${prestigeCount}`);
+    console.log(`Game completed! Prestige count: ${prestigeCount}`);
+    restartGame();
+  }
+
+  // Initialize wildcards for the first phase
+  rerollWildcards();
+
+  // Event listener for hover actions
+  minegame.addEventListener('mouseover', (event) => {
+    if (!event.target || event.target.tagName !== 'TD') return;
+
+    const cell = event.target;
+
+    // Handle wildcard behavior
+    if (cell.classList.contains('wildcard')) {
+      if (cell.classList.contains('active') || cell.classList.contains(`stage-${phase}`)) {
+        // If wildcard is active or in the current stage, reset the stage
+        console.log(`Hovered an active wildcard during stage ${phase}! Restarting stage...`);
+        restartStage();
+        sounds.boom.play(); // Play the reset sound
+        if (phase > 1) startTimer(); // Restart the timer
+        return;
+      } else {
+        // If wildcard is not yet active, activate it
+        cell.classList.add('active');
+        sounds.tap.play(); // Play the "tap" sound
+        console.log('Activated wildcard');
+      }
+    } else {
+      // Handle regular tile behavior
+      if (phase === 1) {
+        // Phase 1: Toggle active class
+        if (cell.classList.contains('active')) {
+          cell.classList.remove('active');
+          sounds.untap.play(); // Play the "untap" sound
+        } else {
+          cell.classList.add('active');
+          sounds.tap.play(); // Play the "tap" sound
+        }
+      } else {
+        // Later phases: Toggle current stage class
+        const stageClass = `stage-${phase}`;
+        const previousStageClass = phase === 2 ? 'active' : `stage-${phase - 1}`;
+        if (cell.classList.contains(stageClass)) {
+          cell.classList.remove(stageClass);
+          sounds.untap.play(); // Play the "untap" sound
+        } else if (cell.classList.contains(previousStageClass)) {
+          cell.classList.add(stageClass);
+          sounds.tap.play(); // Play the "tap" sound
+        }
+      }
+    }
+
+    // Check if all non-wildcards are active or in the current stage
+    const currentStageClass = phase === 1 ? 'active' : `stage-${phase}`;
+    if (allNonWildcardsHaveClass(currentStageClass)) {
+      if (phase === 5) {
+        // Prestige when reaching stage-5
+        prestige();
+      } else {
+        // Move to the next stage
+        console.log(`Completed phase ${phase}. Moving to phase ${phase + 1}`);
+        phase++;
+        updateTilesToCurrentStage(); // Ensure all tiles are updated to `.active` and previous stage class
+        rerollWildcards();
+
+        // Play the "level up" sound
+        sounds.levelUp.play();
+
+        // Start the timer for the next phase
+        startTimer();
+      }
+    }
+  });
+});
+
+	
+	function monitorMineGame() {
+    const mineGameElement = document.querySelector('#minegame');
+
+    if (!mineGameElement) {
+        console.error("Element #minegame not found.");
+        return;
+    }
+
+    // Add a MutationObserver to monitor class changes
+    const observer = new MutationObserver((mutationsList) => {
+        for (const mutation of mutationsList) {
+            if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                if (mineGameElement.classList.contains('prestige')) {
+                    // Stop observing once the class is detected
+                    observer.disconnect();
+
+                    // Create the #minewin element
+                    const mineWin = document.createElement('div');
+                    mineWin.id = 'minewin';
+
+                    const winnerMessage = document.createElement('h3');
+                    winnerMessage.textContent = "A winner is you!";
+                    mineWin.appendChild(winnerMessage);
+
+                    // Insert it right after #minegame
+                    mineGameElement.insertAdjacentElement('afterend', mineWin);
+
+                    // After a few seconds, start generating the ul and li elements
+                    setTimeout(() => {
+                        const ul = document.createElement('ul');
+                        mineWin.appendChild(ul);
+
+                        const generateRandomString = () => {
+                            const length = Math.floor(Math.random() * (8 - 3 + 1)) + 3;
+                            return Math.random().toString(36).substring(2, 2 + length).toUpperCase();
+                        };
+
+                        let counter = 0;
+                        const interval = setInterval(() => {
+                            const li = document.createElement('li');
+
+                            // Occasionally insert the "53CR3T" secret code
+                            if (Math.random() < 0.1) { // ~10% chance
+                                li.textContent = "53CR3T";
+                                li.classList.add('secret-code');
+                            } else {
+                                li.textContent = generateRandomString();
+                            }
+
+                            ul.appendChild(li);
+
+                            // Optional: stop after a certain number of items
+                            if (++counter > 100) clearInterval(interval);
+                        }, 250);
+                    }, 3000); // Wait 3 seconds before starting the ul and li generation
+                }
+            }
+        }
+    });
+
+    // Observe the #minegame element for class changes
+    observer.observe(mineGameElement, { attributes: true });
+}
+
+// Run the function
+monitorMineGame();
+
+</script>
+</div>
