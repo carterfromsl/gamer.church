@@ -1,0 +1,183 @@
+<style>
+  /* Example styles – adjust as desired */
+  .comment { color: #008000; font-style: italic; }
+  .string { color: #BA2121; }
+  .preprocessor { color: #0000FF; }
+  .datatype { color: #795E26; }
+  .keyword { color: #0000FF; font-weight: bold; }
+  .function { color: #795E26; }
+  .number { color: #098658; }
+  .operator { color: #AA5D00; }
+</style>
+
+<pre id="codeOracle">Initializing...</pre>
+<script>
+function generateTempleOSCode() {
+    const functions = [
+        "U0 GodSpeak",
+        "U0 DrawHolyScreen",
+        "U8 *DivineBinary",
+        "I64 ProphecyNum",
+        "U0 BlessMemory",
+        "Bool IsHoly",
+        "U0 PurifyStack",
+        "U0 SpriteBlessing",
+        "U0 AtariJoystick",
+        "U0 DrawSprite16Colors",
+        "U0 BlessedCollision",
+        "U0 PacManPrayer",
+        "U0 InvaderBlast",
+        "U0 PongPaddle",
+        "U0 HolyRaster"
+    ];
+
+    const variables = [
+        "Adam", "Eve", "Spirit", "Light", "Truth", "Faith", "Grace",
+        "Sprite", "Player1", "Enemy", "Score", "Lives", "Joystick",
+        "BackBuffer", "VBlank", "ScanLine", "ColorCycle", "Pattern"
+    ];
+
+    const operations = [
+        "++", "--", "<<", ">>", "&", "|", "^", "=>", "<=>",
+        ">>=", "<<=", "&=", "|=", "^="
+    ];
+
+    const comments = [
+        "// God says this is important",
+        "// Received in a vision",
+        "// Divine optimization required",
+        "// Direct from God's CPU",
+        "// Blessed be the compiler",
+        "// The HOLY GAME showed me this algorithm",
+        "// Holy Spirit guided pointer arithmetic",
+        "// Atari 2600 TIA register blessed by angels",
+        "// Divinely inspired sprite patterns",
+        "// Sacred collision detection routine",
+        "// Prophetic scan line interrupt",
+        "// God's preferred video mode",
+        "// Holy palette cycling"
+    ];
+
+    const datatypes = ["U0", "U8", "U16", "U32", "I64", "F64", "Bool", "Chr", "Sprite"];
+	
+    const secrets = ["3Y35", "P41NT", "34R5", "C0L0R5"];
+
+    const atariRegisters = [
+        "VSYNC", "VBLANK", "WSYNC", "HMOVE", "GRP0", "GRP1", "COLUP0", "COLUP1", "PF0", "PF1", "PF2"
+    ];
+
+    const gamePatterns = [
+        () => `SetSpritePos(${Math.floor(Math.random() * 320)}, ${Math.floor(Math.random() * 200)});`,
+        () => `WaitForVBlank(${getRandomElement(variables)});`,
+        () => `DrawHolySprite(${getRandomElement(variables)}, SPRITE_${['ANGEL', 'CROSS', 'DOVE', 'FISH'][Math.floor(Math.random() * 4)]});`,
+        () => `${getRandomElement(atariRegisters)} = ${Math.floor(Math.random() * 255)};`,
+        () => `asm { STA ${getRandomElement(atariRegisters)} }`,
+        () => `CollisionCheck(Player1, ${getRandomElement(variables)});`,
+        () => `UpdateScore(${Math.floor(Math.random() * 7777)});`,
+        () => `if (JoystickBlessed(0)) MoveSprite(${getRandomElement(variables)});`
+    ];
+
+    function getRandomElement(arr) {
+        return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    function generateLine() {
+        const patterns = [
+            () => `${getRandomElement(datatypes)} ${getRandomElement(variables)} = ${Math.floor(Math.random() * 777)};`,
+            () => `if (${getRandomElement(variables)} ${getRandomElement(operations)} ${getRandomElement(variables)}) asm {INT 0x29}`,
+            () => `${getRandomElement(functions)}(${getRandomElement(variables)});`,
+            () => getRandomElement(comments),
+            () => `#define ${getRandomElement(variables).toUpperCase()}_BLESSING ${Math.floor(Math.random() * 144000)}`,
+            () => `while (*${getRandomElement(variables)}) Cry("Holy!");`,
+            () => `asm { MOV RAX, GOD; CALL RAX }`,
+            () => `// ERROR! Code: …${getRandomElement(secrets)}… != ${Math.floor(Math.random() * 777)};`,
+            () => `switch (${getRandomElement(variables)}) { case 777: Praise(); break; }`,
+            () => `#include "Prayer.HH"`,
+            () => `#include "Prayer.HH"`,
+            () => `#define HOLY_PALETTE { ${Array.from({length: 4}, () => Math.floor(Math.random() * 16)).join(', ')} }`,
+            () => `DrawBlessedPixel(${Math.floor(Math.random() * 320)}, ${Math.floor(Math.random() * 200)}, HOLY_${['RED', 'BLUE', 'GREEN', 'GOLD'][Math.floor(Math.random() * 4)]});`,
+            () => `// TIA Register ${getRandomElement(atariRegisters)} mirrors The Holy Game's glory`,
+            () => `SetInterrupt(DIVINE_VBLANK, &HolyInterruptHandler);`,
+            () => `memset(BlessedVideoMem, ${Math.floor(Math.random() * 255)}, SCREEN_BLESSING_SIZE);`
+        ];
+        return getRandomElement(patterns)();
+    }
+
+    const numLines = Math.floor(Math.random() * 30) + 20; // Generate between 20-50 lines
+    let code = "/* Certified for Righteous Gaming */ \n\n";
+    
+    // Add some initial includes and defines
+    code += "#include \"GamerChurchOS.GCC.Z\"\n";
+    code += "#define SCREEN_BLESSING_SIZE 0x1000\n";
+    code += "#define HOLY_REFRESH_RATE 60\n\n";
+    
+    for (let i = 0; i < numLines; i++) {
+        code += generateLine() + "\n";
+        if (Math.random() < 0.2) code += "\n"; // 20% chance of blank line
+    }
+    
+    return code;
+}
+
+
+// Revised highlighting function with recursive token replacement
+function highlightTempleOSCode(code) {
+    // Define regex patterns and corresponding CSS classes.
+    const patterns = [
+        { regex: /(\/\*[\s\S]*?\*\/)/g, className: 'comment' },
+        { regex: /(\/\/.*$)/gm, className: 'comment' },
+        { regex: /(".*?"|'.*?')/g, className: 'string' },
+        { regex: /^(#\s*\w.*)$/gm, className: 'preprocessor' },
+        { regex: /\b(U0|U8|U16|U32|I64|F64|Bool|Chr|Sprite)\b/g, className: 'datatype' },
+        { regex: /\b(if|else|while|switch|case|break|asm|return)\b/g, className: 'keyword' },
+        { regex: /\b([A-Za-z_]\w*)(?=\s*\()/g, className: 'function' },
+        { regex: /\b(0x[a-fA-F0-9]+|\d+)\b/g, className: 'number' },
+        { regex: /(\+\+|--|<<=|>>=|<<|>>|=>|<=>|&=|\|=|\^=|[&|+\-*/%=<>!^]+)/g, className: 'operator' },
+        { regex: /…([^\s]+)…/g, className: 'secret' }
+    ];
+    
+    // Array to hold our highlighted token strings.
+    let tokens = [];
+    
+    // Use a unique delimiter that is unlikely to appear in the code.
+    const tokenDelim = (index) => `§§TOKEN${index}§§`;
+    
+    // For each pattern, replace its matches with a placeholder and save the markup in tokens[].
+    patterns.forEach(pattern => {
+        code = code.replace(pattern.regex, function(match) {
+            let placeholder = tokenDelim(tokens.length);
+            tokens.push(`<span class="${pattern.className}">${match}</span>`);
+            return placeholder;
+        });
+    });
+    
+    // Escape any remaining HTML special characters in the code.
+    code = code.replace(/&/g, '&amp;')
+               .replace(/</g, '&lt;')
+               .replace(/>/g, '&gt;');
+               
+    // Recursively replace our unique placeholders with the stored HTML tokens.
+    while (code.indexOf("§§TOKEN") !== -1) {
+        code = code.replace(/§§TOKEN(\d+)§§/g, function(match, tokenIndex) {
+            return tokens[tokenIndex];
+        });
+    }
+    
+    return code;
+}
+
+function updateCodeOracle() {
+    const codeElement = document.getElementById('codeOracle');
+    if (codeElement) {
+        const newCode = generateTempleOSCode();
+        // Use innerHTML so that the span tags are interpreted as HTML.
+        codeElement.innerHTML = highlightTempleOSCode(newCode);
+    }
+}
+
+// Initial update.
+updateCodeOracle();
+
+// Update every 10 seconds for continuous divine inspiration.
+setInterval(updateCodeOracle, 10000);
+</script>
