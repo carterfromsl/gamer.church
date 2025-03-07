@@ -1,0 +1,61 @@
+<div class="canvas-picker">
+<button id="canvas16">16x16 Canvas</button>
+<button id="canvas32">32x32 Canvas</button>
+<button id="canvas64">64x64 Canvas</button>
+</div>
+<script>
+    // Function to create/update a cookie with a specified expiry (in days)
+    function setCanvasCookie(name, value, days) {
+      const date = new Date();
+      date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+      const expires = "expires=" + date.toUTCString();
+      document.cookie = name + "=" + encodeURIComponent(value) + "; " + expires + "; path=/";
+    }
+
+    // Attach event listeners to the buttons once the DOM content is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+      const buttons = document.querySelectorAll('.canvas-picker button');
+      buttons.forEach(function(button) {
+        button.addEventListener('click', function() {
+          // Set the cookie "canvasSize" to the id of the clicked button, with an expiry of 7 days
+          setCanvasCookie("canvasSize", this.id, 7);
+          console.log(`Cookie 'canvasSize' set to: ${this.id}`);
+					window.location.reload();
+        });
+      });
+    });
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  // Select the required elements
+  const colorPalette = document.querySelector('.color-palette');
+  const pixelCanvas  = document.querySelector('.pixel-canvas');
+
+  // Create the "Set Background" button
+  const setBackgroundBtn = document.createElement('button');
+  setBackgroundBtn.textContent = 'Set Background';
+  setBackgroundBtn.id = 'set-background-btn';
+
+  // Insert the button directly after the colorPalette element
+  colorPalette.insertAdjacentElement('afterend', setBackgroundBtn);
+
+  // When the button is clicked, add the "bg-select" class to the palette
+  setBackgroundBtn.addEventListener('click', () => {
+    colorPalette.classList.add('bg-select');
+  });
+
+  // Use event delegation: when any palette color is clicked and bg-select is active
+  colorPalette.addEventListener('click', (event) => {
+    // Check if bg-select is active and the clicked element is a palette color
+    if (colorPalette.classList.contains('bg-select') &&
+        event.target.classList.contains('palette-color')) {
+      // Retrieve the color value from the clicked element's data-color attribute
+      const selectedColor = event.target.getAttribute('data-color');
+      // Set the background color of the pixel canvas element
+      pixelCanvas.style.backgroundColor = selectedColor;
+      // Remove the bg-select class so that subsequent clicks on palette colors don't change the background
+      colorPalette.classList.remove('bg-select');
+    }
+  });
+});
+</script>
