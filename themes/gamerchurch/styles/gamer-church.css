@@ -1,0 +1,362 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Sixtyfour+Convergence&family=Xanh+Mono:ital@0;1&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
+:root {
+	--spacing: clamp(20px,4vw,60px);
+	--bg: #000;
+	--body: #fff;
+	--sub: #241d2b;
+	--border-color: #525c55;
+	--main: var(--gold);
+	--alt: var(--red);
+	
+	--bg-accent: url('/wp-content/uploads/2024/12/dark-sand.png');
+	--bg-alt: url('/wp-content/uploads/2024/12/bluesurf.png');
+	
+	--gold: #ffb800;
+	--red: #ff0006;
+	--green: #5bc242;
+	--purple: #cc7fff;
+	
+	--title-font: 'Playfair Display', serif;
+	--body-font: 'Xanh Mono', serif;
+	--alt-font: 'Sixtyfour Convergence', monospace;
+	--mono-font: 'VT323', monospace;
+	
+	--border: 7px groove var(--border-color);
+}
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+	image-rendering: crisp-edges;
+	image-rendering: pixelated;
+}
+
+::selection {
+	color: black;
+	background: var(--main);
+	text-shadow: none;
+}
+
+html {
+	background-color: black;
+	background-image: url('/wp-content/uploads/2024/12/bluebrick.jpg');
+	background-size: 90px;
+	background-attachment: fixed;
+	color: var(--body);
+	font-family: var(--body-font);
+	letter-spacing: 0.025em;
+	overflow-x: hidden;
+}
+
+html.blank {
+	background-image: var(--bg-alt);
+	padding: 0 50px;
+}
+
+.blank::before,
+.blank::after {
+	content: "";
+	display: block;
+	position: fixed;
+	top: 0;
+	left: 0;
+	height: 100vh;
+	width: 50px;
+	pointer-events: none;
+	background-image: url('/wp-content/uploads/2024/12/brick-left.png');
+	background-size: 100% auto;
+	z-index: 1;
+}
+
+.blank::after {
+	left: unset;
+	right: 0;
+	background-position: top right;
+	background-image: url('/wp-content/uploads/2024/12/brick-right.png');
+}
+
+@media (max-width: 700px) {
+	.blank::before {
+		left: -15px;
+	}
+	.blank::after {
+		right: -15px;
+	}
+}
+
+#bg {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	transform: scale(1.1);
+	z-index: -5;
+	background-image: url('/wp-content/uploads/2024/12/bluebrick.jpg');
+	background-size: 80px;
+	background-attachment: fixed;
+	pointer-events: none;
+}
+
+#top {
+	background-color: var(--bg);
+	background-image: url('/wp-content/uploads/2024/12/dark-tile.jpg');
+	border: 7px groove var(--border-color);
+	margin: var(--spacing) auto;
+	padding: var(--spacing);
+	width: 1200px;
+	max-width: calc(90vw - var(--spacing));
+	line-height: 1.5em;
+	font-size: clamp(16px,1.5vw,19px);
+}
+
+html.blank #top {
+	display: grid;
+	border: none;
+	margin: 0;
+	width: 100%;
+	max-width: unset;
+	min-height: 100vh;
+	align-content: center;
+	background: transparent;
+	box-shadow: unset;
+}
+
+img {
+	max-width: 100%;
+	height: auto;
+}
+
+.blank img {
+	border: none;
+	background: transparent;
+}
+
+.blank .aligncenter {
+	margin: 0 auto;
+}
+
+.post-edit-link {
+	display: none;
+}
+
+#top h1,
+#top h2,
+#top h3,
+#top h4,
+#top h5,
+#top h6 {
+	font-family: var(--title-font);
+	font-weight: 600;
+	letter-spacing: 0.05em;
+	text-transform: uppercase;
+	margin-bottom: 0.5em;
+	line-height: 1.15em;
+}
+
+#top h1 {
+	font-size: 2.25em;
+}
+#top h2 {
+	font-size: 1.75em;
+}
+#top h3 {
+	font-size: 1.5em;
+}
+#top h4 {
+	font-size: 1.25em;
+}
+#top p {
+	margin: 1em 0;
+}
+
+#top h1 strong,
+#top h2 strong,
+#top h3 strong,
+#top h4 strong,
+#top h5 strong,
+#top h6 strong {
+	font-family: var(--alt-font);
+	font-weight: normal;
+	display: inline-block;
+	margin: 0 0.25em;
+}
+
+#content li,
+#content p {
+	text-shadow: 0.05em 0.05em black, 0.05em -0.05em black, -0.05em 0.05em black, -0.05em -0.05em black,
+		2px 2px black, 2px -2px black, -2px 2px black, -2px -2px black;
+}
+
+#top del {
+	text-decoration: none;
+	color: var(--alt);
+	font-weight: bold;
+	padding: 0 0.25em;
+	animation: delflash 1s infinite steps(1);
+}
+
+@keyframes delflash {
+	0% {
+		background: black;
+		color: var(--alt);
+	}
+	50% {
+		background: var(--alt);
+		color: white;
+	}
+	100% {
+		background: white;
+		color: var(--alt);
+	}
+}
+
+#top input,
+#top select,
+#top textarea,
+#top button,
+#top .button {
+	background: var(--bg);
+	color: var(--body);
+	border: 1px solid;
+	padding: 0.5em;
+	line-height: 1.25em;
+	font-size: inherit;
+	font-family: inherit;
+	border-radius: 0 !important;
+	min-height: 40px;
+}
+
+#top input[type="search"] {
+	appearance: none;
+	border-radius: 0 !important;
+}
+
+#top input[type="submit"],
+#top button,
+#top .button {
+	cursor: pointer;
+	border-color: var(--body);
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+}
+
+#top input[type="submit"]:hover,
+#top button:hover,
+#top .button:hover {
+	background: var(--body);
+	color: var(--bg);
+}
+
+#top input:focus,
+#top select:focus,
+#top textarea:focus,
+#top button:focus,
+#top .button:focus {
+	box-shadow: 0 0 0 3px var(--alt);
+	outline: unset;
+}
+
+#top a {
+	color: var(--main);
+}
+#top a:hover {
+	color: var(--alt);
+}
+#top a:focus {
+	color: var(--body);
+	text-decoration-color: var(--alt);
+}
+
+#top audio {
+	border: 1px solid;
+	float: left;
+	width: 100%;
+	margin: 0 auto;
+	max-width: 450px;
+	height: 50px;
+	min-height: unset;
+	display: grid;
+	align-content: center;
+	background: var(--bg);
+	color: var(--body);
+	padding: 10px;
+}
+
+#top table {
+	border: 2px solid var(--border-color);
+	border-radius: 0;
+	border-collapse: collapse;
+	background: var(--sub);
+}
+
+#top table tr > * {
+	border: 2px solid var(--border-color);
+}
+
+#top table tr:nth-of-type(even) {
+	background: var(--bg);
+}
+
+#top table th {
+	background-color: var(--bg);
+	background-image: var(--bg-accent);
+	text-transform: uppercase;
+	letter-spacing: 0.1em;
+	font-size: 0.85em;
+}
+
+#top blockquote {
+	border: 2px outset var(--border-color);
+	padding: 1em;
+	margin-bottom: 1em;
+	font-size: 1.25em;
+	line-height: 1.5em;
+	background: var(--bg);
+}
+
+#top blockquote > p:first-of-type {
+	margin-top: 0;
+}
+#top blockquote > p:last-of-type {
+	margin-bottom: 0;
+}
+
+#top .entry-content ul {
+	list-style: square;
+	margin-left: 1em;
+	margin-bottom: 1em;
+}
+#top .entry-content ol {
+	list-style: decimal-leading-zero;
+	margin-left: 2.25em;
+	margin-bottom: 1em;
+}
+
+#top strong {
+	font-weight: 900;
+	color: var(--alt);
+}
+
+#top #content em {
+	font-style: italic;
+}
+
+#top .special {
+	font-weight: normal !important;
+	color: white !important;
+	font-style: normal !important;
+	font-family: var(--alt-font) !important;
+	letter-spacing: 0;
+}
+
+#top hr {
+	border: none;
+	margin: var(--spacing) calc(-1 * var(--spacing));
+	border-bottom: 7px groove var(--border-color);
+	border-top: none;
+}
