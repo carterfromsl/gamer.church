@@ -1,0 +1,186 @@
+<div id="gifBounce"></div>
+<a id="reroll" href="./"><i>You rolled: </i></a>
+<script>
+function randomFloat(min, max) {
+    return Math.random() * (max - min) + min;
+}
+
+function randomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function createRandomImages(images) {
+    const container = document.querySelector("#gifBounce");
+	const reroll = document.querySelector("#reroll");
+    if (!container) {
+        console.error("Container with id #gifBounce not found.");
+        return;
+    }
+
+    // Set container position to relative to allow absolute positioning of children
+    container.style.position = "relative";
+    const containerWidth = container.clientWidth;
+    const containerHeight = container.clientHeight;
+
+    const numImages = randomInt(1, 6); // Choose a random number of images between 1 and 6
+	
+	reroll.innerHTML += '<b>[' + numImages + ']</b>';
+	
+    // To store animation data for each image
+    const floatingImages = [];
+
+    for (let i = 0; i < numImages; i++) {
+        const img = document.createElement("img");
+        img.src = images[randomInt(0, images.length - 1)]; // Pick a random image from the array
+        img.style.position = "absolute";
+        // img.style.width = "50px"; // Adjust size as needed
+        // img.style.height = "50px";
+
+        // Random initial position
+        img.style.left = `${randomInt(0, containerWidth - 50)}px`;
+        img.style.top = `${randomInt(0, containerHeight - 50)}px`;
+
+        container.appendChild(img);
+
+        // Assign initial movement directions
+        floatingImages.push({
+            element: img,
+            dx: randomFloat(1, 3) * (Math.random() < 0.5 ? 1 : -1), // Random speed and direction
+            dy: randomFloat(1, 3) * (Math.random() < 0.5 ? 1 : -1),
+        });
+    }
+
+    function animate() {
+        floatingImages.forEach((obj) => {
+            const img = obj.element;
+            const rect = img.getBoundingClientRect();
+
+            // Calculate new position
+            let newX = parseFloat(img.style.left) + obj.dx;
+            let newY = parseFloat(img.style.top) + obj.dy;
+
+            // Check for collision with container bounds
+            if (newX <= 0 || newX + rect.width >= containerWidth) {
+                obj.dx *= -1; // Reverse horizontal direction
+                newX = Math.max(0, Math.min(newX, containerWidth - rect.width));
+            }
+
+            if (newY <= 0 || newY + rect.height >= containerHeight) {
+                obj.dy *= -1; // Reverse vertical direction
+                newY = Math.max(0, Math.min(newY, containerHeight - rect.height));
+            }
+
+            // Apply new position
+            img.style.left = `${newX}px`;
+            img.style.top = `${newY}px`;
+        });
+
+        requestAnimationFrame(animate); // Continue animation
+    }
+
+    animate();
+}
+</script>
+
+<script>
+const imageArray = [
+	"/wp-content/uploads/2024/12/cd-spin.gif",
+	"/wp-content/uploads/2024/12/spinearth.gif",
+	"/wp-content/uploads/2024/12/vhs-tape.gif",
+	"/wp-content/uploads/2024/12/fire-circle.gif",
+	"/wp-content/uploads/2024/12/globe-spin.gif",
+	"/wp-content/uploads/2024/12/star-spin.gif",
+	"/wp-content/uploads/2024/12/button-1.gif",
+	"/wp-content/uploads/2024/12/pyramid.gif",
+	"/wp-content/uploads/2024/12/candle.gif",
+	"/wp-content/uploads/2024/12/skull-spin.gif",
+	"/wp-content/uploads/2024/12/pegasus.gif",
+	"/wp-content/uploads/2024/12/ghost-dance.gif",
+	"/wp-content/uploads/2024/12/owl-fly.gif",
+	"/wp-content/uploads/2024/12/film-camera.gif",
+	"/wp-content/uploads/2024/12/book-spin.gif",
+	"/wp-content/uploads/2024/12/dove-flying.gif",
+	"/wp-content/uploads/2024/12/spike-spin.gif",
+	"/wp-content/uploads/2024/12/milk-bottle.gif",
+	"/wp-content/uploads/2024/12/mod-spin.gif",
+	"/wp-content/uploads/2024/12/mod-spin.gif?n=2",
+	"/wp-content/uploads/2024/12/paladinmove.gif",
+	"/wp-content/uploads/2024/12/book-pages.gif",
+	"/wp-content/uploads/2024/12/heart3d.gif",
+	"/wp-content/uploads/2024/12/Home3d.gif",
+	"/wp-content/uploads/2024/12/3d-plane.gif",
+	"/wp-content/uploads/2024/12/3d-skull.gif",
+	"/wp-content/uploads/2024/12/angel-laser.gif",
+	"/wp-content/uploads/2024/12/ufo.gif",
+	"/wp-content/uploads/2024/12/ufo.gif?n=1",
+	"/wp-content/uploads/2024/12/ufo.gif?n=2",
+	"/wp-content/uploads/2024/12/ufo.gif?n=3",
+	"/wp-content/uploads/2024/12/ufo.gif?n=4",
+];
+
+createRandomImages(imageArray);
+</script>
+
+<script>
+function checkForDuplicateImages() {
+    // Set a timeout of 1 second
+    setTimeout(() => {
+        // Get all images within the gifBounce div
+        const images = document.querySelectorAll('#gifBounce img');
+        
+        // Create a map to store image counts
+        const imageCount = new Map();
+        
+        // Loop through images and count occurrences
+        images.forEach(img => {
+            // Get the source URL and remove any query parameters
+            const srcWithoutQuery = img.src.split('?')[0];
+            
+            // Get just the filename from the path
+            const filename = srcWithoutQuery.split('/').pop();
+            
+            // Increment count for this image
+            imageCount.set(filename, (imageCount.get(filename) || 0) + 1);
+        });
+        
+        // Find the highest number of duplicates
+        let maxDuplicates = 0;
+        imageCount.forEach(count => {
+            if (count > maxDuplicates) {
+                maxDuplicates = count;
+            }
+        });
+        
+        // Only proceed if we found duplicates
+        if (maxDuplicates >= 2) {
+            // Remove any existing lucky-roll divs
+            document.querySelectorAll('.lucky-roll').forEach(el => el.remove());
+            
+            // Create the appropriate message
+            const dupeNames = {
+                2: 'dubs',
+                3: 'trips',
+                4: 'quads',
+                5: 'quints',
+                6: 'sexts'
+            };
+            
+            // Create and append the new element
+            if (dupeNames[maxDuplicates]) {
+                const luckyDiv = document.createElement('div');
+                luckyDiv.className = `lucky-roll ${dupeNames[maxDuplicates]}`;
+                luckyDiv.textContent = `${dupeNames[maxDuplicates].toUpperCase()} ROLL!!1`;
+                
+                // Find .blank-page-content and append
+                const container = document.querySelector('.blank-page-content');
+                if (container) {
+                    container.appendChild(luckyDiv);
+                }
+            }
+        }
+    }, 1000); // 1000ms = 1 second delay
+}
+
+// Run the check immediately and also whenever the content might change
+checkForDuplicateImages();
+</script>
