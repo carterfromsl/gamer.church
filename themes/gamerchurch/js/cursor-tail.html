@@ -1,0 +1,58 @@
+<div id="trail-container"></div>
+<script>
+function createTrailingCursorEffect() {
+    const trailCount = 7; // Number of trailing elements
+    const trailElements = [];
+    const mousePosition = { x: 0, y: 0 };
+
+    const container = document.getElementById("trail-container");
+
+    // Create the trailing divs
+    for (let i = 0; i < trailCount; i++) {
+        const div = document.createElement("div");
+        div.classList.add("trail");
+        container.appendChild(div);
+        trailElements.push({
+            element: div,
+            x: 0,
+            y: 0,
+        });
+    }
+
+    // Update mouse position
+    document.addEventListener("mousemove", (e) => {
+        mousePosition.x = e.clientX;
+        mousePosition.y = e.clientY;
+    });
+
+    // Animate the trail
+    function animateTrail() {
+        trailElements.forEach((trail, index) => {
+            const element = trail.element;
+
+            // Calculate the position, easing into the mouse position
+            if (index === 0) {
+                // The first element follows the cursor
+                trail.x += (mousePosition.x - trail.x) * 0.2;
+                trail.y += (mousePosition.y - trail.y) * 0.2;
+            } else {
+                // Subsequent elements follow the one before them
+                const prevTrail = trailElements[index - 1];
+                trail.x += (prevTrail.x - trail.x) * 0.2;
+                trail.y += (prevTrail.y - trail.y) * 0.2;
+            }
+
+            // Apply the position to the element
+            element.style.transform = `translate(${trail.x}px, ${trail.y}px)`;
+        });
+
+        requestAnimationFrame(animateTrail);
+    }
+
+    animateTrail();
+}
+
+// Call the function
+createTrailingCursorEffect();
+
+</script>
